@@ -1,0 +1,41 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "title": "100x Academy",
+      "url": "https://100x-academy-six.vercel.app/",
+      "description": "Zamonaviy IT ta'lim platformasi va onlayn kurslar loyihasi.",
+      "tags": ["React", "Tailwind", "Vercel"]
+    },
+    {
+      "id": 2,
+      "title": "Survival Arena",
+      "url": "https://survival-arena-blond.vercel.app",
+      "description": "Brauzerda ishlovchi survival dinamik o'yin va interaktiv veb dastur.",
+      "tags": ["JavaScript", "Game Dev", "Canvas"]
+    },
+    {
+      "id": 3,
+      "title": "Mashina Savdo",
+      "url": "https://mashina-savdo-lime.vercel.app/",
+      "description": "Avtomobillar sotish va xarid qilish uchun e'lonlar maydoni.",
+      "tags": ["React", "Frontend", "E-Commerce"]
+    },
+    {
+      "id": 4,
+      "title": "Snake Game",
+      "url": "https://snake-game-pi-two-39.vercel.app/",
+      "description": "Klassik retro iloncha o'yinining qulay boshqaruvga ega veb talqini.",
+      "tags": ["JavaScript", "Retro Game", "Vercel"]
+    },
+    {
+      "id": 5,
+      "title": "Shop Frontend",
+      "url": "https://shop-frontend-iota-lake.vercel.app/",
+      "description": "Zamonaviy onlayn internet-do'kon frontend interfeysi va katalog tizimi.",
+      "tags": ["React", "Online Shop", "UI/UX"]
+    }
+  ],
+  "avatar": "",
+  "messages": []
+}
