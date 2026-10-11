@@ -1,4 +1,4 @@
-/* Minimalist 2-3 rangli zamonaviy dizayn tizimi */
+/* Minimalist 2-3 rangli zamonaviy dizayn tizimi (Dark & Light) */
 :root {
   --bg-main: #0b0f19;
   --bg-card: #121826;
@@ -11,6 +11,9 @@
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
+  --input-bg: #0d121e;
+  --navbar-bg: rgba(11, 15, 25, 0.88);
+  --mobile-nav-bg: rgba(11, 15, 25, 0.97);
   --danger: #ef4444;
   --danger-hover: #dc2626;
   --success: #10b981;
@@ -21,10 +24,29 @@
   --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
 }
 
+[data-theme="light"] {
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --border-color: #e2e8f0;
+  --border-focus: #2563eb;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-glow: rgba(37, 99, 235, 0.12);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --input-bg: #f8fafc;
+  --navbar-bg: rgba(255, 255, 255, 0.9);
+  --mobile-nav-bg: rgba(255, 255, 255, 0.98);
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease;
 }
 
 html {
@@ -38,7 +60,16 @@ body {
   min-height: 100vh;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  background-color: var(--bg-main);
+}
+
+[data-theme="dark"] body {
   background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 50%), var(--bg-main);
+  background-attachment: fixed;
+}
+
+[data-theme="light"] body {
+  background: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.06) 0%, transparent 50%), var(--bg-main);
   background-attachment: fixed;
 }
 
@@ -50,7 +81,7 @@ body {
   background: var(--bg-main);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: var(--border-color);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -78,7 +109,7 @@ a {
   z-index: 100;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  background: rgba(11, 15, 25, 0.85);
+  background: var(--navbar-bg);
   border-bottom: 1px solid var(--border-color);
   transition: all 0.3s ease;
 }
@@ -116,13 +147,13 @@ a {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.4rem;
   list-style: none;
 }
 
 .nav-link {
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 0.93rem;
   font-weight: 500;
   transition: color 0.2s;
   cursor: pointer;
@@ -132,11 +163,70 @@ a {
   color: var(--text-primary);
 }
 
+/* Til va Tungi/Kunduzgi rejim boshqaruv bloklari */
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.lang-switcher {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  gap: 2px;
+}
+
+.lang-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.03em;
+}
+
+.lang-btn:hover {
+  color: var(--text-primary);
+}
+
+.lang-btn.active {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.theme-toggle-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--bg-card-hover);
+}
+
 .admin-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.9rem;
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -161,7 +251,7 @@ a {
 
 /* Hero Section */
 .hero-section {
-  padding: 5rem 0 4rem;
+  padding: 4.5rem 0 3.5rem;
 }
 
 .hero-grid {
@@ -206,7 +296,7 @@ a {
 }
 
 .hero-subtitle {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: var(--text-secondary);
   margin-bottom: 1.25rem;
@@ -214,7 +304,7 @@ a {
 
 .hero-bio {
   color: var(--text-secondary);
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   line-height: 1.7;
   margin-bottom: 1.75rem;
 }
@@ -234,6 +324,10 @@ a {
   padding: 0.85rem 1rem;
 }
 
+.info-card.full-width {
+  grid-column: span 2;
+}
+
 .info-card-label {
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -241,10 +335,13 @@ a {
   color: var(--text-muted);
   font-weight: 600;
   margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .info-card-value {
-  font-size: 0.95rem;
+  font-size: 0.93rem;
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -335,6 +432,8 @@ a {
   gap: 0.5rem;
   font-weight: 500;
   font-size: 0.9rem;
+  text-align: center;
+  padding: 1rem;
 }
 
 /* Section Header */
@@ -363,6 +462,78 @@ a {
   color: var(--text-secondary);
   font-size: 1rem;
   margin-top: 0.4rem;
+}
+
+/* Skills Section */
+.skills-section {
+  padding: 4.5rem 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+  gap: 1.25rem;
+}
+
+.skill-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: all 0.25s ease;
+  box-shadow: var(--shadow-card);
+}
+
+.skill-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  background: var(--bg-card-hover);
+}
+
+.skill-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.skill-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-glow);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  font-weight: 800;
+  font-size: 0.92rem;
+}
+
+.skill-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--accent-glow);
+  color: var(--accent);
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.skill-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.skill-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 /* Projects Section */
@@ -471,7 +642,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--border-color);
   padding-top: 1rem;
   margin-top: auto;
 }
@@ -485,7 +656,7 @@ a {
 .tag {
   font-size: 0.75rem;
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--accent-glow);
   color: var(--text-secondary);
   padding: 0.25rem 0.55rem;
   border-radius: 4px;
@@ -507,7 +678,7 @@ a {
   color: var(--text-primary);
 }
 
-/* Social Section */
+/* Social & Contacts Section */
 .social-section {
   padding: 4.5rem 0;
   border-top: 1px solid var(--border-color);
@@ -515,7 +686,7 @@ a {
 
 .social-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.25rem;
 }
 
@@ -525,7 +696,7 @@ a {
   gap: 1.25rem;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  padding: 1.4rem;
+  padding: 1.3rem 1.4rem;
   border-radius: var(--radius-md);
   transition: all 0.25s ease;
 }
@@ -549,10 +720,17 @@ a {
   flex-shrink: 0;
 }
 
+.social-icon-wrapper.youtube {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
 .social-meta h4 {
   font-size: 1.05rem;
   font-weight: 700;
   margin-bottom: 0.2rem;
+  color: var(--text-primary);
 }
 
 .social-meta p {
@@ -598,6 +776,17 @@ a {
   justify-content: center;
 }
 
+.phone-link {
+  color: var(--text-primary);
+  font-weight: 600;
+  transition: color 0.2s;
+  display: block;
+}
+
+.phone-link:hover {
+  color: var(--accent);
+}
+
 .contact-form {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -624,7 +813,7 @@ a {
 .form-textarea {
   width: 100%;
   padding: 0.85rem 1rem;
-  background: #0d121e;
+  background: var(--input-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
@@ -654,13 +843,13 @@ a {
 .form-alert.success {
   background: rgba(16, 185, 129, 0.12);
   border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #34d399;
+  color: #10b981;
 }
 
 .form-alert.error {
   background: rgba(239, 68, 68, 0.12);
   border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #f87171;
+  color: #ef4444;
 }
 
 /* Footer */
@@ -717,6 +906,7 @@ a {
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  color: var(--text-primary);
 }
 
 .close-btn {
@@ -734,7 +924,7 @@ a {
 
 .close-btn:hover {
   color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--accent-glow);
 }
 
 /* Admin Tabs */
@@ -787,7 +977,7 @@ a {
 }
 
 .message-item {
-  background: #0d121e;
+  background: var(--input-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 1.2rem;
@@ -800,7 +990,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 0.5rem;
 }
 
@@ -832,7 +1022,7 @@ a {
   align-items: center;
   gap: 1.5rem;
   padding: 1.25rem;
-  background: #0d121e;
+  background: var(--input-bg);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   margin-bottom: 1.25rem;
@@ -871,7 +1061,7 @@ a {
 }
 
 .mobile-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--accent-glow);
 }
 
 .mobile-menu-drawer {
@@ -879,7 +1069,7 @@ a {
   top: 72px;
   left: 0;
   right: 0;
-  background: rgba(11, 15, 25, 0.97);
+  background: var(--mobile-nav-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-color);
@@ -896,7 +1086,7 @@ a {
   font-size: 1.05rem;
   font-weight: 600;
   padding: 0.7rem 0.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--border-color);
   transition: all 0.2s;
 }
 
@@ -909,8 +1099,13 @@ a {
   padding-left: 0.8rem;
 }
 
+/* Mobil pastki boshqaruv paneli (Bottom Navigation Bar) */
+.mobile-bottom-nav {
+  display: none;
+}
+
 /* Responsive (Planshet va telefonlar) */
-@media (max-width: 868px) {
+@media (max-width: 920px) {
   .nav-links {
     display: none;
   }
@@ -918,7 +1113,7 @@ a {
   .mobile-nav-actions {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
   }
 
   .hero-grid {
@@ -939,64 +1134,11 @@ a {
     grid-template-columns: 1fr;
   }
 
-  .social-grid {
-    grid-template-columns: 1fr;
-  }
-
   .avatar-container {
     width: 230px;
     height: 230px;
   }
-}
 
-/* Kichik telefonlar (iPhone, Samsung, Xiaomi va h.k.) */
-@media (max-width: 520px) {
-  .hero-title {
-    font-size: 2.1rem;
-  }
-
-  .hero-subtitle {
-    font-size: 1.05rem;
-  }
-
-  .hero-bio {
-    font-size: 0.95rem;
-  }
-
-  .info-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .projects-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .modal-content {
-    padding: 1.4rem 1.1rem;
-    max-height: 94vh;
-  }
-
-  .contact-form {
-    padding: 1.4rem 1.1rem;
-  }
-
-  .admin-tabs {
-    gap: 0.25rem;
-  }
-
-  .admin-tab-btn {
-    padding: 0.6rem 0.75rem;
-    font-size: 0.82rem;
-  }
-}
-
-/* Mobil pastki boshqaruv paneli (Bottom Navigation Bar) */
-.mobile-bottom-nav {
-  display: none;
-}
-
-@media (max-width: 768px) {
-  /* Pastki panel uchun sahifa pastiga bo'sh joy qoldirish */
   body {
     padding-bottom: 74px;
     -webkit-tap-highlight-color: transparent;
@@ -1009,7 +1151,7 @@ a {
     left: 0;
     right: 0;
     height: 64px;
-    background: rgba(11, 15, 25, 0.95);
+    background: var(--mobile-nav-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid var(--border-color);
@@ -1048,18 +1190,75 @@ a {
     color: var(--accent);
   }
 
-  /* Mobil inputlar iOS da kattalashib ketmasligi uchun min 16px */
   .form-input,
   .form-textarea {
     font-size: 16px !important;
   }
 
-  /* Tugma va kartalar bosilganda yumshoq tebranish */
   .project-card:active,
   .social-card:active,
+  .skill-card:active,
   .btn-primary:active,
   .btn-secondary:active {
     transform: scale(0.98);
+  }
+}
+
+/* Kichik telefonlar */
+@media (max-width: 540px) {
+  .hero-title {
+    font-size: 2.1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .hero-bio {
+    font-size: 0.95rem;
+  }
+
+  .info-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .info-card.full-width {
+    grid-column: span 1;
+  }
+
+  .skills-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-content {
+    padding: 1.4rem 1.1rem;
+    max-height: 94vh;
+  }
+
+  .contact-form {
+    padding: 1.4rem 1.1rem;
+  }
+
+  .admin-tabs {
+    gap: 0.25rem;
+  }
+
+  .admin-tab-btn {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  .nav-controls {
+    gap: 0.35rem;
+  }
+
+  .lang-btn {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
   }
 }
 

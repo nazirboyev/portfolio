@@ -15,10 +15,16 @@ import {
   FolderGit2,
   ImageIcon,
   Sparkles,
-  Menu
+  Menu,
+  Sun,
+  Moon,
+  Phone,
+  Gamepad2,
+  Code2
 } from 'lucide-react';
+import { translations } from './translations';
 
-// GitHub Icon
+// SVG Icons (Pixel-perfect & zero export issues)
 const GithubIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/>
@@ -26,7 +32,6 @@ const GithubIcon = () => (
   </svg>
 );
 
-// Instagram icon
 const InstagramIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
@@ -35,11 +40,17 @@ const InstagramIcon = () => (
   </svg>
 );
 
-// Telegram icon
 const TelegramIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="m22 2-7 20-4-9-9-4Z"/>
     <path d="M22 2 11 13"/>
+  </svg>
+);
+
+const YoutubeIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+    <path d="m10 15 5-3-5-3z" fill="currentColor" />
   </svg>
 );
 
@@ -82,9 +93,21 @@ const INITIAL_PROJECTS = [
   }
 ];
 
-
 export default function App() {
-  // Loyihalar holati (LocalStorage)
+  // Til holati (uz, ru, en)
+  const [lang, setLang] = useState(() => {
+    return localStorage.getItem('nazirboyev_lang') || 'uz';
+  });
+
+  // Tungi / Kunduzgi rejim (dark, light)
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('nazirboyev_theme') || 'dark';
+  });
+
+  // Faol til tarjimalari
+  const t = translations[lang] || translations.uz;
+
+  // Loyihalar holati
   const [projects, setProjects] = useState(() => {
     const saved = localStorage.getItem('nazirboyev_projects');
     return saved ? JSON.parse(saved) : INITIAL_PROJECTS;
@@ -106,7 +129,7 @@ export default function App() {
     return localStorage.getItem('nazirboyev_is_admin') === 'true';
   });
 
-  // Modallar
+  // Modallar va menyular
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -135,7 +158,22 @@ export default function App() {
   const [contactSuccess, setContactSuccess] = useState('');
   const [contactError, setContactError] = useState('');
 
-  // Ma'lumotlarni server diskiga (data/portfolio-data.json) saqlash
+  // Theme rejimini DOM ga qo'llash
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('nazirboyev_theme', theme);
+  }, [theme]);
+
+  // Tilni saqlash
+  useEffect(() => {
+    localStorage.setItem('nazirboyev_lang', lang);
+  }, [lang]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  // Server diskiga (data/portfolio-data.json) saqlash
   const syncToServer = async (updatedProjects, updatedAvatar, updatedMessages) => {
     try {
       await fetch('/api/save', {
@@ -152,7 +190,7 @@ export default function App() {
     }
   };
 
-  // Sahifa birinchi marta ochilganda server diskidan eng so'nggi ma'lumotlarni yuklab olish
+  // Sahifa ochilganda server diskidan o'qib olish
   useEffect(() => {
     fetch('/api/data')
       .then((res) => {
@@ -182,7 +220,7 @@ export default function App() {
       });
   }, []);
 
-  // LocalStorage ga avtomatik zaxira nusxa saqlash
+  // LocalStorage zaxira saqlash
   useEffect(() => {
     localStorage.setItem('nazirboyev_projects', JSON.stringify(projects));
   }, [projects]);
@@ -214,11 +252,10 @@ export default function App() {
       setLoginUsername('');
       setLoginPassword('');
     } else {
-      setLoginError("Login yoki parol noto'g'ri! Iltimos, qayta urinib ko'ring.");
+      setLoginError(lang === 'ru' ? "Неверный логин или пароль!" : (lang === 'en' ? "Invalid login or password!" : "Login yoki parol noto'g'ri!"));
     }
   };
 
-  // Logout funksiyasi
   const handleLogout = () => {
     setIsAdmin(false);
     setShowAdminModal(false);
@@ -228,7 +265,7 @@ export default function App() {
   const handleAddProject = (e) => {
     e.preventDefault();
     if (!newProject.title.trim() || !newProject.url.trim()) {
-      alert("Iltimos, loyiha nomi va havolasini kiriting!");
+      alert(lang === 'ru' ? "Введите название и ссылку!" : (lang === 'en' ? "Please enter project title and link!" : "Iltimos, loyiha nomi va havolasini kiriting!"));
       return;
     }
 
@@ -240,7 +277,7 @@ export default function App() {
       id: Date.now(),
       title: newProject.title.trim(),
       url: newProject.url.trim().startsWith('http') ? newProject.url.trim() : `https://${newProject.url.trim()}`,
-      description: newProject.description.trim() || "Web loyiha.",
+      description: newProject.description.trim() || (lang === 'ru' ? "Веб-проект" : (lang === 'en' ? "Web project" : "Web loyiha.")),
       tags: tagsArray
     };
 
@@ -248,12 +285,13 @@ export default function App() {
     setProjects(updated);
     syncToServer(updated, avatar, messages);
     setNewProject({ title: '', url: '', description: '', tags: '' });
-    alert("Yangi loyiha muvaffaqiyatli qo'shildi va server diskiga saqlandi!");
+    alert(lang === 'ru' ? "Проект успешно добавлен и сохранен!" : (lang === 'en' ? "Project added and saved successfully!" : "Yangi loyiha muvaffaqiyatli qo'shildi va saqlandi!"));
   };
 
   // Loyihani o'chirish
   const handleDeleteProject = (id) => {
-    if (window.confirm("Rostdan ham ushbu loyihani o'chirmoqchimisiz?")) {
+    const confirmMsg = lang === 'ru' ? "Удалить этот проект?" : (lang === 'en' ? "Delete this project?" : "Rostdan ham ushbu loyihani o'chirmoqchimisiz?");
+    if (window.confirm(confirmMsg)) {
       const updated = projects.filter((p) => p.id !== id);
       setProjects(updated);
       syncToServer(updated, avatar, messages);
@@ -265,7 +303,7 @@ export default function App() {
     const file = e.target.files[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
-        alert("Rasm hajmi juda katta (maksimal 2MB)! Kichikroq rasm tanlang.");
+        alert(lang === 'ru' ? "Файл слишком большой (макс 2MB)!" : (lang === 'en' ? "File too large (max 2MB)!" : "Rasm hajmi juda katta (maksimal 2MB)!"));
         return;
       }
       const reader = new FileReader();
@@ -273,7 +311,7 @@ export default function App() {
         const newImg = reader.result;
         setAvatar(newImg);
         syncToServer(projects, newImg, messages);
-        alert("Profil rasmi muvaffaqiyatli yangilandi va saqlandi!");
+        alert(lang === 'ru' ? "Фото профиля обновлено!" : (lang === 'en' ? "Profile photo updated!" : "Profil rasmi yangilandi!"));
       };
       reader.readAsDataURL(file);
     }
@@ -287,13 +325,14 @@ export default function App() {
       setAvatar(newImg);
       syncToServer(projects, newImg, messages);
       setAvatarUrlInput('');
-      alert("Profil rasmi muvaffaqiyatli saqlandi!");
+      alert(lang === 'ru' ? "Фото профиля сохранено!" : (lang === 'en' ? "Profile photo saved!" : "Profil rasmi saqlandi!"));
     }
   };
 
   // Rasmni o'chirish
   const handleDeleteAvatar = () => {
-    if (window.confirm("Profil rasmini o'chirmoqchimisiz?")) {
+    const confirmMsg = lang === 'ru' ? "Удалить фото профиля?" : (lang === 'en' ? "Delete profile photo?" : "Profil rasmini o'chirmoqchimisiz?");
+    if (window.confirm(confirmMsg)) {
       setAvatar('');
       syncToServer(projects, '', messages);
     }
@@ -303,7 +342,7 @@ export default function App() {
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!contactName.trim() || !contactInfo.trim() || !contactMessage.trim()) {
-      setContactError("Iltimos, barcha maydonlarni to'ldiring!");
+      setContactError(t.contact.errorMsg);
       return;
     }
 
@@ -312,14 +351,14 @@ export default function App() {
       name: contactName.trim(),
       contact: contactInfo.trim(),
       message: contactMessage.trim(),
-      date: new Date().toLocaleString('uz-UZ')
+      date: new Date().toLocaleString(lang === 'ru' ? 'ru-RU' : (lang === 'en' ? 'en-US' : 'uz-UZ'))
     };
 
     const updated = [newMsg, ...messages];
     setMessages(updated);
     syncToServer(projects, avatar, updated);
 
-    setContactSuccess("Xabaringiz muvaffaqiyatli yuborildi! Tez orada siz bilan bog'lanaman.");
+    setContactSuccess(t.contact.successMsg);
     setContactError('');
     setContactName('');
     setContactInfo('');
@@ -347,61 +386,79 @@ export default function App() {
             <span>Nazirboyev</span>
           </a>
 
+          {/* Desktop Nav Links */}
           <ul className="nav-links">
-            <li><a href="#hero" className="nav-link">Men haqimda</a></li>
-            <li><a href="#projects" className="nav-link">Loyihalar</a></li>
-            <li><a href="#social" className="nav-link">Tarmoqlar</a></li>
-            <li><a href="#contact" className="nav-link">Bog'lanish</a></li>
-            <li>
-              {isAdmin ? (
-                <button
-                  className="admin-btn active"
-                  onClick={() => setShowAdminModal(true)}
-                  title="Admin Panelni ochish"
-                >
-                  <Lock size={15} />
-                  <span>Admin Panel</span>
-                </button>
-              ) : (
-                <button
-                  className="admin-btn"
-                  onClick={() => setShowLoginModal(true)}
-                  title="Admin sifatida kirish"
-                >
-                  <Lock size={15} />
-                  <span>Admin</span>
-                </button>
-              )}
-            </li>
+            <li><a href="#hero" className="nav-link">{t.nav.about}</a></li>
+            <li><a href="#skills" className="nav-link">{t.nav.skills}</a></li>
+            <li><a href="#projects" className="nav-link">{t.nav.projects}</a></li>
+            <li><a href="#social" className="nav-link">{t.nav.social}</a></li>
+            <li><a href="#contact" className="nav-link">{t.nav.contact}</a></li>
           </ul>
 
-          {/* Mobil ekranlar uchun boshqaruv tugmalari */}
-          <div className="mobile-nav-actions">
+          {/* Tungi/Kunduzgi rejim & Til tanlash & Admin */}
+          <div className="nav-controls">
+            {/* Til tanlagich (Language Switcher) */}
+            <div className="lang-switcher" title="Tilni tanlash / Выбор языка / Select Language">
+              <button
+                className={`lang-btn ${lang === 'uz' ? 'active' : ''}`}
+                onClick={() => setLang('uz')}
+              >
+                UZ
+              </button>
+              <button
+                className={`lang-btn ${lang === 'ru' ? 'active' : ''}`}
+                onClick={() => setLang('ru')}
+              >
+                RU
+              </button>
+              <button
+                className={`lang-btn ${lang === 'en' ? 'active' : ''}`}
+                onClick={() => setLang('en')}
+              >
+                EN
+              </button>
+            </div>
+
+            {/* Tungi va Kunduzgi rejim tugmasi (Dark / Light Mode) */}
+            <button
+              className="theme-toggle-btn"
+              onClick={toggleTheme}
+              title={theme === 'dark' ? (lang === 'ru' ? 'Светлая тема' : (lang === 'en' ? 'Light mode' : 'Kunduzgi rejim')) : (lang === 'ru' ? 'Темная тема' : (lang === 'en' ? 'Dark mode' : 'Tungi rejim'))}
+            >
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+
+            {/* Desktop Admin tugmasi */}
             {isAdmin ? (
               <button
-                className="admin-btn active mobile-admin-icon"
+                className="admin-btn active"
                 onClick={() => setShowAdminModal(true)}
-                title="Admin Panel"
+                title={t.nav.adminPanel}
               >
                 <Lock size={15} />
+                <span>{t.nav.adminPanel}</span>
               </button>
             ) : (
               <button
-                className="admin-btn mobile-admin-icon"
+                className="admin-btn"
                 onClick={() => setShowLoginModal(true)}
-                title="Admin"
+                title={t.nav.admin}
               >
                 <Lock size={15} />
+                <span>{t.nav.admin}</span>
               </button>
             )}
 
-            <button
-              className="mobile-toggle-btn"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Menyu"
-            >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            {/* Mobil menyu tugmasi */}
+            <div className="mobile-nav-actions">
+              <button
+                className="mobile-toggle-btn"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Menyu"
+              >
+                {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -413,28 +470,35 @@ export default function App() {
               className="mobile-nav-item"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Men haqimda
+              {t.nav.about}
+            </a>
+            <a
+              href="#skills"
+              className="mobile-nav-item"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t.nav.skills}
             </a>
             <a
               href="#projects"
               className="mobile-nav-item"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Loyihalar
+              {t.nav.projects}
             </a>
             <a
               href="#social"
               className="mobile-nav-item"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Tarmoqlar
+              {t.nav.social}
             </a>
             <a
               href="#contact"
               className="mobile-nav-item"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Bog'lanish
+              {t.nav.contact}
             </a>
           </div>
         )}
@@ -447,48 +511,95 @@ export default function App() {
             <div>
               <div className="hero-badge">
                 <span className="status-dot"></span>
-                Web Dasturchi &bull; Yangi loyihalarga tayyor
+                {t.hero.badge}
               </div>
 
               <h1 className="hero-title">
-                Salom, men <br />
-                <span>Nazirboyev Xudoyshukur</span>
+                {t.hero.greeting} <br />
+                <span>{t.hero.name}</span>
               </h1>
 
               <div className="hero-subtitle">
-                Web Dasturchi &bull; Fullstack Developer
+                {t.hero.role}
               </div>
 
               <p className="hero-bio">
-                Men zamonaviy, tezkor va foydalanuvchi uchun qulay web ilovalar, saytlar hamda interaktiv loyihalar yaratish bilan shug'ullanaman. Har bir loyihada toza kod va chiroyli dizaynga katta e'tibor qarataman.
+                {t.hero.bio}
               </p>
 
               {/* Shaxsiy ma'lumot kartalari */}
               <div className="info-cards">
                 <div className="info-card">
-                  <div className="info-card-label">To'liq ism (F.I.O)</div>
-                  <div className="info-card-value">Nazirboyev Xudoyshukur Xurmatbek o'g'li</div>
+                  <div className="info-card-label">
+                    <User size={14} />
+                    <span>{t.hero.fioLabel}</span>
+                  </div>
+                  <div className="info-card-value">{t.hero.fioValue}</div>
                 </div>
+
                 <div className="info-card">
-                  <div className="info-card-label">Yosh &amp; Tug'ilgan sana</div>
-                  <div className="info-card-value">17 yosh (2009-yil 5-iyul)</div>
+                  <div className="info-card-label">
+                    <MapPin size={14} />
+                    <span>{t.hero.birthLabel}</span>
+                  </div>
+                  <div className="info-card-value">{t.hero.birthValue}</div>
                 </div>
+
                 <div className="info-card">
-                  <div className="info-card-label">Tug'ilgan joyi &amp; Yashash manzili</div>
-                  <div className="info-card-value">Xorazm viloyati, Xiva shahri</div>
+                  <div className="info-card-label">
+                    <MapPin size={14} />
+                    <span>{t.hero.locationLabel}</span>
+                  </div>
+                  <div className="info-card-value">{t.hero.locationValue}</div>
                 </div>
+
                 <div className="info-card">
-                  <div className="info-card-label">Mutaxassislik</div>
-                  <div className="info-card-value">Web Dasturchi (Frontend / Fullstack)</div>
+                  <div className="info-card-label">
+                    <Briefcase size={14} />
+                    <span>{t.hero.schoolLabel}</span>
+                  </div>
+                  <div className="info-card-value">{t.hero.schoolValue}</div>
+                </div>
+
+                <div className="info-card">
+                  <div className="info-card-label">
+                    <Code2 size={14} />
+                    <span>{t.hero.itParkLabel}</span>
+                  </div>
+                  <div className="info-card-value">{t.hero.itParkValue}</div>
+                </div>
+
+                <div className="info-card">
+                  <div className="info-card-label">
+                    <Gamepad2 size={14} />
+                    <span>{t.hero.hobbyLabel}</span>
+                  </div>
+                  <div className="info-card-value">{t.hero.hobbyValue}</div>
+                </div>
+
+                {/* Telefon raqamlar kartasi (Full width) */}
+                <div className="info-card full-width">
+                  <div className="info-card-label">
+                    <Phone size={14} />
+                    <span>{t.hero.phonesLabel}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', marginTop: '0.2rem' }}>
+                    <a href="tel:+998888571817" className="phone-link">
+                      📞 +998 88 857 18 17
+                    </a>
+                    <a href="tel:+998776040009" className="phone-link">
+                      📞 +998 77 604 00 09
+                    </a>
+                  </div>
                 </div>
               </div>
 
               <div className="hero-actions">
                 <a href="#projects" className="btn-primary">
-                  Loyihalarimni ko'rish
+                  {t.hero.viewProjects}
                 </a>
                 <a href="#contact" className="btn-secondary">
-                  Bog'lanish
+                  {t.hero.contactMe}
                 </a>
               </div>
             </div>
@@ -501,10 +612,10 @@ export default function App() {
                 ) : (
                   <div className="avatar-placeholder">
                     <User size={68} strokeWidth={1.5} />
-                    <span>Profil rasmi kiritilmagan</span>
+                    <span>{t.hero.noAvatar}</span>
                     {isAdmin && (
                       <span style={{ fontSize: '0.75rem', color: 'var(--accent)' }}>
-                        Admin panel orqali rasm yuklang
+                        {t.hero.adminUploadHint}
                       </span>
                     )}
                   </div>
@@ -515,15 +626,39 @@ export default function App() {
         </div>
       </section>
 
+      {/* KO'NIKMALAR (SKILLS) SECTION */}
+      <section id="skills" className="skills-section">
+        <div className="container">
+          <div className="section-header">
+            <span className="section-tag">{t.skills.tag}</span>
+            <h2 className="section-title">{t.skills.title}</h2>
+            <p className="section-desc">{t.skills.desc}</p>
+          </div>
+
+          <div className="skills-grid">
+            {t.skills.items.map((skill, index) => (
+              <div key={index} className="skill-card">
+                <div className="skill-top">
+                  <div className="skill-icon-box">
+                    {skill.name === 'React Js' ? '⚛️' : (skill.name === 'GitHub' ? '🐙' : (skill.name === 'JavaScript' ? 'JS' : (skill.name === 'CSS' ? '🎨' : '🌐')))}
+                  </div>
+                  <span className="skill-badge">{skill.level}</span>
+                </div>
+                <h3 className="skill-name">{skill.name}</h3>
+                <p className="skill-desc">{skill.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* LOYIHALAR SECTION */}
       <section id="projects" className="projects-section">
         <div className="container">
           <div className="section-header">
-            <span className="section-tag">Portfolio</span>
-            <h2 className="section-title">Mening Loyihalarim</h2>
-            <p className="section-desc">
-              Men yaratgan va ishlab chiqqan eng so'nggi real web loyihalar ro'yxati.
-            </p>
+            <span className="section-tag">{t.projects.tag}</span>
+            <h2 className="section-title">{t.projects.title}</h2>
+            <p className="section-desc">{t.projects.desc}</p>
           </div>
 
           <div className="projects-grid">
@@ -539,7 +674,7 @@ export default function App() {
                         <button
                           className="btn-delete-project"
                           onClick={() => handleDeleteProject(project.id)}
-                          title="Loyihani o'chirish"
+                          title="O'chirish"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -549,7 +684,7 @@ export default function App() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="icon-link"
-                        title="Saytga o'tish"
+                        title={project.title}
                       >
                         <ExternalLink size={18} />
                       </a>
@@ -572,7 +707,7 @@ export default function App() {
                     rel="noopener noreferrer"
                     className="visit-btn"
                   >
-                    <span>Ko'rish</span>
+                    <span>{t.projects.visit}</span>
                     <ExternalLink size={14} />
                   </a>
                 </div>
@@ -582,18 +717,32 @@ export default function App() {
         </div>
       </section>
 
-      {/* IJTIMOIY TARMOQLAR SECTION */}
+      {/* IJTIMOIY TARMOQLAR & TELEFONLAR SECTION */}
       <section id="social" className="social-section">
         <div className="container">
           <div className="section-header">
-            <span className="section-tag">Tarmoqlar</span>
-            <h2 className="section-title">Ijtimoiy Tarmoqlar</h2>
-            <p className="section-desc">
-              Mening rasmiy sahifalarim va kod omborlarim bilan tanishing.
-            </p>
+            <span className="section-tag">{t.social.tag}</span>
+            <h2 className="section-title">{t.social.title}</h2>
+            <p className="section-desc">{t.social.desc}</p>
           </div>
 
           <div className="social-grid">
+            {/* YouTube Channel (@XudishPlay) */}
+            <a
+              href="https://www.youtube.com/@XudishPlay"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-card"
+            >
+              <div className="social-icon-wrapper youtube">
+                <YoutubeIcon />
+              </div>
+              <div className="social-meta">
+                <h4>YouTube</h4>
+                <p>{t.social.youtubeSub}</p>
+              </div>
+            </a>
+
             {/* Telegram */}
             <a
               href="https://t.me/nazirboyev_x"
@@ -606,7 +755,7 @@ export default function App() {
               </div>
               <div className="social-meta">
                 <h4>Telegram</h4>
-                <p>@nazirboyev_x</p>
+                <p>{t.social.telegramSub}</p>
               </div>
             </a>
 
@@ -622,7 +771,7 @@ export default function App() {
               </div>
               <div className="social-meta">
                 <h4>Instagram</h4>
-                <p>@nazirboyev.x</p>
+                <p>{t.social.instagramSub}</p>
               </div>
             </a>
 
@@ -638,7 +787,35 @@ export default function App() {
               </div>
               <div className="social-meta">
                 <h4>GitHub</h4>
-                <p>github.com/nazirboyev</p>
+                <p>{t.social.githubSub}</p>
+              </div>
+            </a>
+
+            {/* Telefon 1 */}
+            <a
+              href="tel:+998888571817"
+              className="social-card"
+            >
+              <div className="social-icon-wrapper">
+                <Phone size={22} />
+              </div>
+              <div className="social-meta">
+                <h4>+998 88 857 18 17</h4>
+                <p>{t.social.phone1Sub}</p>
+              </div>
+            </a>
+
+            {/* Telefon 2 */}
+            <a
+              href="tel:+998776040009"
+              className="social-card"
+            >
+              <div className="social-icon-wrapper">
+                <Phone size={22} />
+              </div>
+              <div className="social-meta">
+                <h4>+998 77 604 00 09</h4>
+                <p>{t.social.phone2Sub}</p>
               </div>
             </a>
           </div>
@@ -649,17 +826,15 @@ export default function App() {
       <section id="contact" className="contact-section">
         <div className="container">
           <div className="section-header">
-            <span className="section-tag">Aloqa</span>
-            <h2 className="section-title">Men bilan bog'lanish</h2>
-            <p className="section-desc">
-              Savolingiz, hamkorlik yoki yangi loyiha bormi? Menga bemalol yozishingiz mumkin.
-            </p>
+            <span className="section-tag">{t.contact.tag}</span>
+            <h2 className="section-title">{t.contact.title}</h2>
+            <p className="section-desc">{t.contact.desc}</p>
           </div>
 
           <div className="contact-layout">
             <div>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', lineHeight: '1.7' }}>
-                Xabar yuborsangiz, u darhol mening admin panelimga yetib boradi. Shuningdek, to'g'ridan-to'g'ri Telegram orqali ham bog'lanishingiz mumkin.
+                {t.contact.infoText}
               </p>
 
               <div className="contact-info-list">
@@ -668,8 +843,21 @@ export default function App() {
                     <MapPin size={20} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Manzil</div>
-                    <div style={{ fontWeight: 600 }}>Xorazm viloyati, Xiva shahri</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t.contact.address}</div>
+                    <div style={{ fontWeight: 600 }}>{t.contact.addressVal}</div>
+                  </div>
+                </div>
+
+                <div className="contact-info-item">
+                  <div className="contact-info-icon">
+                    <Phone size={20} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t.contact.phones}</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      <a href="tel:+998888571817" className="phone-link">+998 88 857 18 17</a>
+                      <a href="tel:+998776040009" className="phone-link">+998 77 604 00 09</a>
+                    </div>
                   </div>
                 </div>
 
@@ -695,8 +883,8 @@ export default function App() {
                     <Briefcase size={20} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Kasbi</div>
-                    <div style={{ fontWeight: 600 }}>Web Dasturchi (Fullstack)</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t.contact.roleLabel}</div>
+                    <div style={{ fontWeight: 600 }}>{t.contact.roleVal}</div>
                   </div>
                 </div>
               </div>
@@ -716,11 +904,11 @@ export default function App() {
               )}
 
               <div className="form-group">
-                <label className="form-label">Ismingiz</label>
+                <label className="form-label">{t.contact.nameLabel}</label>
                 <input
                   type="text"
                   required
-                  placeholder="Masalan: Sardor"
+                  placeholder={t.contact.namePlaceholder}
                   className="form-input"
                   value={contactName}
                   onChange={(e) => setContactName(e.target.value)}
@@ -728,11 +916,11 @@ export default function App() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Telefon yoki Telegram manzilingiz</label>
+                <label className="form-label">{t.contact.contactLabel}</label>
                 <input
                   type="text"
                   required
-                  placeholder="@foydalanuvchi yoki +998 90 123 45 67"
+                  placeholder={t.contact.contactPlaceholder}
                   className="form-input"
                   value={contactInfo}
                   onChange={(e) => setContactInfo(e.target.value)}
@@ -740,10 +928,10 @@ export default function App() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Xabaringiz</label>
+                <label className="form-label">{t.contact.messageLabel}</label>
                 <textarea
                   required
-                  placeholder="Loyihangiz yoki taklifingiz haqida yozing..."
+                  placeholder={t.contact.messagePlaceholder}
                   className="form-textarea"
                   value={contactMessage}
                   onChange={(e) => setContactMessage(e.target.value)}
@@ -752,7 +940,7 @@ export default function App() {
 
               <button type="submit" className="btn-primary" style={{ marginTop: '0.5rem' }}>
                 <Send size={18} />
-                <span>Xabarni yuborish</span>
+                <span>{t.contact.sendBtn}</span>
               </button>
             </form>
           </div>
@@ -762,7 +950,7 @@ export default function App() {
       {/* FOOTER */}
       <footer className="footer">
         <div className="container">
-          <p>&copy; {new Date().getFullYear()} Nazirboyev Xudoyshukur. Barcha huquqlar himoyalangan.</p>
+          <p>&copy; {new Date().getFullYear()} Nazirboyev Xudoyshukur. {t.footer}</p>
         </div>
       </footer>
 
@@ -770,26 +958,30 @@ export default function App() {
       <nav className="mobile-bottom-nav">
         <a href="#hero" className="mobile-tab-btn">
           <User size={19} />
-          <span>Profil</span>
+          <span>{t.nav.about}</span>
+        </a>
+        <a href="#skills" className="mobile-tab-btn">
+          <Code2 size={19} />
+          <span>{t.nav.skills}</span>
         </a>
         <a href="#projects" className="mobile-tab-btn">
           <FolderGit2 size={19} />
-          <span>Loyihalar</span>
+          <span>{t.nav.projects}</span>
         </a>
         <a href="#social" className="mobile-tab-btn">
           <Sparkles size={19} />
-          <span>Tarmoqlar</span>
+          <span>{t.nav.social}</span>
         </a>
         <a href="#contact" className="mobile-tab-btn">
           <Send size={19} />
-          <span>Aloqa</span>
+          <span>{t.nav.contact}</span>
         </a>
         <button
           onClick={() => (isAdmin ? setShowAdminModal(true) : setShowLoginModal(true))}
           className={`mobile-tab-btn ${isAdmin ? 'admin-active' : ''}`}
         >
           <Lock size={19} />
-          <span>Admin</span>
+          <span>{t.nav.admin}</span>
         </button>
       </nav>
 
@@ -800,7 +992,7 @@ export default function App() {
             <div className="modal-header">
               <h3 className="modal-title">
                 <Lock size={22} color="var(--accent)" />
-                Admin Panelga Kirish
+                {t.admin.title}
               </h3>
               <button className="close-btn" onClick={() => setShowLoginModal(false)}>
                 <X size={20} />
@@ -811,12 +1003,12 @@ export default function App() {
 
             <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
               <div className="form-group">
-                <label className="form-label">Login</label>
+                <label className="form-label">{t.admin.login}</label>
                 <input
                   type="text"
                   required
                   autoFocus
-                  placeholder="Loginni kiriting"
+                  placeholder="nazirboyev"
                   className="form-input"
                   value={loginUsername}
                   onChange={(e) => setLoginUsername(e.target.value)}
@@ -824,11 +1016,11 @@ export default function App() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Parol</label>
+                <label className="form-label">{t.admin.password}</label>
                 <input
                   type="password"
                   required
-                  placeholder="Parolni kiriting"
+                  placeholder="zuxra"
                   className="form-input"
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
@@ -836,7 +1028,7 @@ export default function App() {
               </div>
 
               <button type="submit" className="btn-primary" style={{ marginTop: '0.5rem' }}>
-                <span>Tizimga kirish</span>
+                <span>{t.admin.loginBtn}</span>
               </button>
             </form>
           </div>
@@ -850,7 +1042,7 @@ export default function App() {
             <div className="modal-header">
               <h3 className="modal-title">
                 <Sparkles size={22} color="var(--accent)" />
-                Boshqaruv Paneli (Admin)
+                {t.admin.dashboardTitle}
               </h3>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                 <button
@@ -859,7 +1051,7 @@ export default function App() {
                   style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', color: 'var(--danger)' }}
                 >
                   <LogOut size={16} />
-                  <span>Chiqish</span>
+                  <span>{t.admin.logoutBtn}</span>
                 </button>
                 <button className="close-btn" onClick={() => setShowAdminModal(false)}>
                   <X size={20} />
@@ -874,7 +1066,7 @@ export default function App() {
                 onClick={() => setAdminTab('projects')}
               >
                 <Plus size={16} />
-                <span>Yangi loyiha qo'shish</span>
+                <span>{t.admin.tabProjects}</span>
               </button>
 
               <button
@@ -882,7 +1074,7 @@ export default function App() {
                 onClick={() => setAdminTab('avatar')}
               >
                 <ImageIcon size={16} />
-                <span>Profil rasmini boshqarish</span>
+                <span>{t.admin.tabAvatar}</span>
               </button>
 
               <button
@@ -890,7 +1082,7 @@ export default function App() {
                 onClick={() => setAdminTab('messages')}
               >
                 <MessageSquare size={16} />
-                <span>Kelgan xabarlar</span>
+                <span>{t.admin.tabMessages}</span>
                 {messages.length > 0 && <span className="badge-count">{messages.length}</span>}
               </button>
             </div>
@@ -900,11 +1092,11 @@ export default function App() {
               <div>
                 <form onSubmit={handleAddProject} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <div className="form-group">
-                    <label className="form-label">Loyiha nomi *</label>
+                    <label className="form-label">{t.admin.projName}</label>
                     <input
                       type="text"
                       required
-                      placeholder="Masalan: Yangi CRM Tizim"
+                      placeholder="CRM System"
                       className="form-input"
                       value={newProject.title}
                       onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
@@ -912,11 +1104,11 @@ export default function App() {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Loyiha havolasi (URL manzili) *</label>
+                    <label className="form-label">{t.admin.projUrl}</label>
                     <input
                       type="url"
                       required
-                      placeholder="https://yangi-sayt.vercel.app"
+                      placeholder="https://yangi-loyiha.vercel.app"
                       className="form-input"
                       value={newProject.url}
                       onChange={(e) => setNewProject({ ...newProject, url: e.target.value })}
@@ -924,9 +1116,9 @@ export default function App() {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Tavsifi</label>
+                    <label className="form-label">{t.admin.projDesc}</label>
                     <textarea
-                      placeholder="Loyiha nima haqida ekanligini qisqacha yozing..."
+                      placeholder="Loyiha haqida..."
                       className="form-textarea"
                       style={{ minHeight: '80px' }}
                       value={newProject.description}
@@ -935,7 +1127,7 @@ export default function App() {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Texnologiyalar (vergul bilan ajrating)</label>
+                    <label className="form-label">{t.admin.projTags}</label>
                     <input
                       type="text"
                       placeholder="React, Next.js, Node.js"
@@ -947,12 +1139,12 @@ export default function App() {
 
                   <button type="submit" className="btn-primary" style={{ alignSelf: 'flex-start' }}>
                     <Plus size={18} />
-                    <span>Loyihani qo'shish</span>
+                    <span>{t.admin.addProjBtn}</span>
                   </button>
                 </form>
 
                 <div style={{ marginTop: '2rem', borderTop: '1px solid var(--border-color)', paddingTop: '1.2rem' }}>
-                  <h4 style={{ marginBottom: '1rem', fontSize: '1rem' }}>Mavjud loyihalar ({projects.length} ta)</h4>
+                  <h4 style={{ marginBottom: '1rem', fontSize: '1rem' }}>{t.admin.existingProjs} ({projects.length})</h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', maxHeight: '220px', overflowY: 'auto' }}>
                     {projects.map((p) => (
                       <div
@@ -961,7 +1153,7 @@ export default function App() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
-                          background: '#0d121e',
+                          background: 'var(--input-bg)',
                           padding: '0.75rem 1rem',
                           borderRadius: '8px',
                           border: '1px solid var(--border-color)'
@@ -997,33 +1189,31 @@ export default function App() {
                     </div>
                   )}
                   <div>
-                    <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>Hozirgi profil rasmi</div>
-                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
-                      {avatar ? "Rasm yuklangan va saytda ko'rinmoqda." : "Rasm hozircha mavjud emas."}
+                    <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>
+                      {avatar ? "Rasm yuklangan" : "Rasm mavjud emas"}
                     </div>
                     {avatar && (
                       <button
                         onClick={handleDeleteAvatar}
                         className="btn-delete-project"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.8rem' }}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.8rem', marginTop: '0.4rem' }}
                       >
                         <Trash2 size={15} />
-                        <span>Rasmni butunlay o'chirish</span>
+                        <span>{t.admin.deleteAvatarBtn}</span>
                       </button>
                     )}
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                  {/* Variant 1: Kompyuterdan fayl yuklash */}
-                  <div style={{ background: '#0d121e', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
-                    <h4 style={{ marginBottom: '0.5rem', fontSize: '0.95rem' }}>1. Kompyuterdan yangi rasm yuklash</h4>
+                  <div style={{ background: 'var(--input-bg)', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+                    <h4 style={{ marginBottom: '0.5rem', fontSize: '0.95rem' }}>{t.admin.uploadTitle}</h4>
                     <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                      JPG, PNG yoki WEBP formatidagi rasmni tanlang.
+                      {t.admin.uploadDesc}
                     </p>
                     <label className="btn-secondary" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
                       <Upload size={18} />
-                      <span>Faylni tanlash</span>
+                      <span>{t.admin.selectFile}</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -1033,19 +1223,18 @@ export default function App() {
                     </label>
                   </div>
 
-                  {/* Variant 2: Internetdan URL manzil kiritish */}
-                  <form onSubmit={handleSetAvatarUrl} style={{ background: '#0d121e', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
-                    <h4 style={{ marginBottom: '0.5rem', fontSize: '0.95rem' }}>2. Yoki Rasm havolasini (URL) kiritish</h4>
+                  <form onSubmit={handleSetAvatarUrl} style={{ background: 'var(--input-bg)', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+                    <h4 style={{ marginBottom: '0.5rem', fontSize: '0.95rem' }}>{t.admin.urlTitle}</h4>
                     <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.75rem' }}>
                       <input
                         type="url"
-                        placeholder="https://example.com/rasmingiz.jpg"
+                        placeholder="https://example.com/avatar.jpg"
                         className="form-input"
                         value={avatarUrlInput}
                         onChange={(e) => setAvatarUrlInput(e.target.value)}
                       />
                       <button type="submit" className="btn-primary" style={{ whiteSpace: 'nowrap' }}>
-                        Saqlash
+                        {t.admin.saveBtn}
                       </button>
                     </div>
                   </form>
@@ -1057,16 +1246,16 @@ export default function App() {
             {adminTab === 'messages' && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <h4 style={{ fontSize: '1rem' }}>Foydalanuvchilar qoldirgan xabarlar</h4>
+                  <h4 style={{ fontSize: '1rem' }}>{t.admin.messagesTitle}</h4>
                   <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    Jami: {messages.length} ta
+                    {messages.length} ta
                   </span>
                 </div>
 
                 {messages.length === 0 ? (
                   <div className="empty-state">
                     <MessageSquare size={44} style={{ opacity: 0.3, marginBottom: '0.5rem' }} />
-                    <p>Hozircha xabarlar yo'q.</p>
+                    <p>{t.admin.noMessages}</p>
                   </div>
                 ) : (
                   <div className="messages-list" style={{ maxHeight: '400px', overflowY: 'auto' }}>
@@ -1083,7 +1272,7 @@ export default function App() {
                             <button
                               onClick={() => handleDeleteMessage(msg.id)}
                               className="btn-delete-project"
-                              title="Xabarni o'chirish"
+                              title="O'chirish"
                             >
                               <Trash2 size={15} />
                             </button>
