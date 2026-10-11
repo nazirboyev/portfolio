@@ -501,17 +501,20 @@ a {
 }
 
 .skill-icon-box {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-sm);
-  background: var(--accent-glow);
-  color: var(--accent);
+  background: var(--bg-card-hover);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(59, 130, 246, 0.25);
-  font-weight: 800;
-  font-size: 0.92rem;
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.skill-card:hover .skill-icon-box {
+  transform: scale(1.1);
 }
 
 .skill-badge {
@@ -711,19 +714,17 @@ a {
   width: 48px;
   height: 48px;
   border-radius: var(--radius-sm);
-  background: var(--accent-glow);
-  color: var(--accent);
+  background: var(--bg-card-hover);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(59, 130, 246, 0.25);
+  border: 1px solid var(--border-color);
   flex-shrink: 0;
+  transition: transform 0.2s ease;
 }
 
-.social-icon-wrapper.youtube {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.12);
-  border-color: rgba(239, 68, 68, 0.25);
+.social-card:hover .social-icon-wrapper {
+  transform: scale(1.08);
 }
 
 .social-meta h4 {

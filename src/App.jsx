@@ -20,39 +20,95 @@ import {
   Moon,
   Phone,
   Gamepad2,
-  Code2
+  Code2,
+  GraduationCap,
+  Calendar
 } from 'lucide-react';
 import { translations } from './translations';
 
-// SVG Icons (Pixel-perfect & zero export issues)
+// Rasmiy Logo va Ikonkalar (Brand SVGs)
+const Html5Icon = () => (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+    <path d="M3 2L4.8 20.3L12 22.3L19.2 20.3L21 2H3Z" fill="#E34F26"/>
+    <path d="M12 3.8V20.5L17.8 18.9L19.4 3.8H12Z" fill="#EF652A"/>
+    <path d="M12 7.7H7.4L7.6 10H12V12.3H7.8L8 14.6L12 15.6V17.9L7.2 16.6L6.8 11.8L6.4 5.5H17.6L17.4 7.7H12Z" fill="#ECECEC"/>
+    <path d="M12 12.3V10H15.6L15.4 12.3H12ZM12 15.6V17.9L16.8 16.6L17.1 13.2H14.8L14.6 14.6L12 15.6Z" fill="#FFFFFF"/>
+  </svg>
+);
+
+const Css3Icon = () => (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+    <path d="M3 2L4.8 20.3L12 22.3L19.2 20.3L21 2H3Z" fill="#1572B6"/>
+    <path d="M12 3.8V20.5L17.8 18.9L19.4 3.8H12Z" fill="#33A9DC"/>
+    <path d="M12 7.7H7.4L7.6 10H12V12.3H7.8L8 14.6L12 15.6V17.9L7.2 16.6L6.8 11.8L6.4 5.5H17.6L17.4 7.7H12Z" fill="#ECECEC"/>
+    <path d="M12 12.3V10H15.6L15.4 12.3H12ZM12 15.6V17.9L16.8 16.6L17.1 13.2H14.8L14.6 14.6L12 15.6Z" fill="#FFFFFF"/>
+  </svg>
+);
+
+const JsIcon = () => (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+    <rect width="24" height="24" rx="4" fill="#F7DF1E"/>
+    <path d="M6.5 17.8C7.1 18.5 7.9 18.9 9 18.9C10.2 18.9 11 18.3 11 17.1V10.5H9.2V17C9.2 17.5 8.9 17.7 8.5 17.7C8.1 17.7 7.7 17.4 7.4 17L6.5 17.8ZM12.7 18.8C13.8 19.4 15 19.7 16.2 19.7C18.4 19.7 19.8 18.6 19.8 16.8C19.8 15.2 18.8 14.4 17.1 13.6C15.8 13.1 15.2 12.6 15.2 11.9C15.2 11.2 15.8 10.7 16.7 10.7C17.6 10.7 18.4 11.1 18.9 11.7L19.9 10.5C19.1 9.6 18 9.2 16.6 9.2C14.7 9.2 13.4 10.3 13.4 12C13.4 13.5 14.3 14.3 16 15C17.4 15.6 17.9 16.2 17.9 17C17.9 17.8 17.2 18.4 16.1 18.4C15.1 18.4 14.1 17.9 13.5 17.2L12.7 18.8Z" fill="#000000"/>
+  </svg>
+);
+
+const ReactIcon = () => (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+    <ellipse cx="12" cy="12" rx="4.2" ry="10" stroke="#61DAFB" strokeWidth="1.6" transform="rotate(30 12 12)"/>
+    <ellipse cx="12" cy="12" rx="4.2" ry="10" stroke="#61DAFB" strokeWidth="1.6" transform="rotate(90 12 12)"/>
+    <ellipse cx="12" cy="12" rx="4.2" ry="10" stroke="#61DAFB" strokeWidth="1.6" transform="rotate(150 12 12)"/>
+    <circle cx="12" cy="12" r="2" fill="#61DAFB"/>
+  </svg>
+);
+
 const GithubIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/>
-    <path d="M9 18c-4.51 2-5-2-7-2"/>
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+    <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
   </svg>
 );
 
 const InstagramIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+    <defs>
+      <radialGradient id="instaGrad" cx="30%" cy="107%" r="150%">
+        <stop offset="0%" stopColor="#fdf497" />
+        <stop offset="5%" stopColor="#fdf497" />
+        <stop offset="45%" stopColor="#fd5949" />
+        <stop offset="60%" stopColor="#d6249f" />
+        <stop offset="90%" stopColor="#285AEB" />
+      </radialGradient>
+    </defs>
+    <rect width="24" height="24" rx="6" fill="url(#instaGrad)" />
+    <path d="M16 4H8C5.79086 4 4 5.79086 4 8V16C4 18.2091 5.79086 20 8 20H16C18.2091 20 20 18.2091 20 16V8C20 5.79086 18.2091 4 16 4Z" stroke="white" strokeWidth="1.8" fill="none"/>
+    <circle cx="12" cy="12" r="3.5" stroke="white" strokeWidth="1.8" fill="none"/>
+    <circle cx="16.5" cy="7.5" r="1" fill="white"/>
   </svg>
 );
 
 const TelegramIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="m22 2-7 20-4-9-9-4Z"/>
-    <path d="M22 2 11 13"/>
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="12" fill="#2AABEE"/>
+    <path d="M5.4 11.8L17.7 7.1C18.3 6.9 18.8 7.3 18.6 7.9L16.5 17.7C16.3 18.5 15.6 18.7 15 18.3L11.8 15.9L10.3 17.4C10.1 17.6 10 17.8 9.7 17.8L9.9 14.6L15.7 9.4C16 9.1 15.6 9 15.3 9.2L8.1 13.7L5 12.7C4.3 12.5 4.3 12 5.4 11.8Z" fill="white"/>
   </svg>
 );
 
 const YoutubeIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
-    <path d="m10 15 5-3-5-3z" fill="currentColor" />
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+    <rect width="24" height="24" rx="6" fill="#FF0000"/>
+    <path d="M10 8.5L16 12L10 15.5V8.5Z" fill="white"/>
   </svg>
 );
+
+const renderSkillIcon = (name) => {
+  switch (name) {
+    case 'HTML': return <Html5Icon />;
+    case 'CSS': return <Css3Icon />;
+    case 'JavaScript': return <JsIcon />;
+    case 'React Js': return <ReactIcon />;
+    case 'GitHub': return <GithubIcon />;
+    default: return <Code2 size={24} />;
+  }
+};
 
 // Boshlang'ich default loyihalar
 const INITIAL_PROJECTS = [
@@ -539,7 +595,7 @@ export default function App() {
 
                 <div className="info-card">
                   <div className="info-card-label">
-                    <MapPin size={14} />
+                    <Calendar size={14} />
                     <span>{t.hero.birthLabel}</span>
                   </div>
                   <div className="info-card-value">{t.hero.birthValue}</div>
@@ -555,7 +611,7 @@ export default function App() {
 
                 <div className="info-card">
                   <div className="info-card-label">
-                    <Briefcase size={14} />
+                    <GraduationCap size={14} />
                     <span>{t.hero.schoolLabel}</span>
                   </div>
                   <div className="info-card-value">{t.hero.schoolValue}</div>
@@ -640,7 +696,7 @@ export default function App() {
               <div key={index} className="skill-card">
                 <div className="skill-top">
                   <div className="skill-icon-box">
-                    {skill.name === 'React Js' ? '⚛️' : (skill.name === 'GitHub' ? '🐙' : (skill.name === 'JavaScript' ? 'JS' : (skill.name === 'CSS' ? '🎨' : '🌐')))}
+                    {renderSkillIcon(skill.name)}
                   </div>
                   <span className="skill-badge">{skill.level}</span>
                 </div>
@@ -1008,7 +1064,7 @@ export default function App() {
                   type="text"
                   required
                   autoFocus
-                  placeholder="nazirboyev"
+                  placeholder="••••••••"
                   className="form-input"
                   value={loginUsername}
                   onChange={(e) => setLoginUsername(e.target.value)}
@@ -1020,7 +1076,7 @@ export default function App() {
                 <input
                   type="password"
                   required
-                  placeholder="zuxra"
+                  placeholder="••••••••"
                   className="form-input"
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
