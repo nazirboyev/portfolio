@@ -22,7 +22,8 @@ import {
   Gamepad2,
   Code2,
   GraduationCap,
-  Calendar
+  Calendar,
+  ChevronDown
 } from 'lucide-react';
 import { translations } from './translations';
 
@@ -189,7 +190,19 @@ export default function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [adminTab, setAdminTab] = useState('projects'); // 'projects' | 'avatar' | 'messages'
+
+  // Til tanlash dropdownini tashqariga bosganda yopish
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest('.lang-dropdown-wrapper')) {
+        setLangDropdownOpen(false);
+      }
+    };
+    document.addEventListener('click', handleOutsideClick);
+    return () => document.removeEventListener('click', handleOutsideClick);
+  }, []);
 
   // Login form
   const [loginUsername, setLoginUsername] = useState('');
