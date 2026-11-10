@@ -111,6 +111,52 @@ const renderSkillIcon = (name) => {
   }
 };
 
+// Davlat Bayroqlari (Flag SVGs)
+const UzbekFlag = () => (
+  <svg width="22" height="15" viewBox="0 0 22 15" fill="none" style={{ borderRadius: '3px', flexShrink: 0, display: 'block' }}>
+    <rect width="22" height="15" fill="#1EB53A" />
+    <rect width="22" height="10" fill="#FFFFFF" />
+    <rect width="22" height="5" fill="#0099B5" />
+    <rect y="4.7" width="22" height="0.6" fill="#CE1126" />
+    <rect y="9.7" width="22" height="0.6" fill="#CE1126" />
+    <circle cx="3.8" cy="2.5" r="1.4" fill="#FFFFFF" />
+    <circle cx="4.3" cy="2.5" r="1.2" fill="#0099B5" />
+    <circle cx="5.8" cy="1.6" r="0.3" fill="#FFFFFF" />
+    <circle cx="6.8" cy="1.6" r="0.3" fill="#FFFFFF" />
+    <circle cx="7.8" cy="1.6" r="0.3" fill="#FFFFFF" />
+    <circle cx="6.3" cy="2.5" r="0.3" fill="#FFFFFF" />
+    <circle cx="7.3" cy="2.5" r="0.3" fill="#FFFFFF" />
+    <circle cx="6.8" cy="3.4" r="0.3" fill="#FFFFFF" />
+  </svg>
+);
+
+const RussianFlag = () => (
+  <svg width="22" height="15" viewBox="0 0 22 15" fill="none" style={{ borderRadius: '3px', flexShrink: 0, display: 'block' }}>
+    <rect width="22" height="5" fill="#FFFFFF" />
+    <rect y="5" width="22" height="5" fill="#0039A6" />
+    <rect y="10" width="22" height="5" fill="#D52B1E" />
+  </svg>
+);
+
+const EnglishFlag = () => (
+  <svg width="22" height="15" viewBox="0 0 22 15" fill="none" style={{ borderRadius: '3px', flexShrink: 0, display: 'block' }}>
+    <clipPath id="uk-flag-clip"><rect width="22" height="15" rx="3"/></clipPath>
+    <g clipPath="url(#uk-flag-clip)">
+      <rect width="22" height="15" fill="#012169"/>
+      <path d="M0 0L22 15M22 0L0 15" stroke="#FFFFFF" strokeWidth="2.5"/>
+      <path d="M0 0L22 15M22 0L0 15" stroke="#C8102E" strokeWidth="1.2"/>
+      <path d="M11 0V15M0 7.5H22" stroke="#FFFFFF" strokeWidth="4.2"/>
+      <path d="M11 0V15M0 7.5H22" stroke="#C8102E" strokeWidth="2.4"/>
+    </g>
+  </svg>
+);
+
+const LANGUAGES = [
+  { code: 'uz', name: "O'zbek", Flag: UzbekFlag },
+  { code: 'ru', name: "Русский", Flag: RussianFlag },
+  { code: 'en', name: "English", Flag: EnglishFlag }
+];
+
 // Boshlang'ich default loyihalar
 const INITIAL_PROJECTS = [
   {
@@ -170,10 +216,13 @@ export default function App() {
     return saved ? JSON.parse(saved) : INITIAL_PROJECTS;
   });
 
-  // Profil rasmi holati
+  // Profil rasmi holati (standart rasm /avatar.jpg)
   const [avatar, setAvatar] = useState(() => {
-    return localStorage.getItem('nazirboyev_avatar') || '';
+    return localStorage.getItem('nazirboyev_avatar') || '/avatar.jpg';
   });
+
+  const currentLang = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
+  const otherLangs = LANGUAGES.filter((l) => l.code !== lang);
 
   // Kelgan xabarlar holati
   const [messages, setMessages] = useState(() => {
@@ -271,13 +320,12 @@ export default function App() {
           setProjects(data.projects);
           localStorage.setItem('nazirboyev_projects', JSON.stringify(data.projects));
         }
-        if (typeof data.avatar === 'string') {
+        if (typeof data.avatar === 'string' && data.avatar) {
           setAvatar(data.avatar);
-          if (data.avatar) {
-            localStorage.setItem('nazirboyev_avatar', data.avatar);
-          } else {
-            localStorage.removeItem('nazirboyev_avatar');
-          }
+          localStorage.setItem('nazirboyev_avatar', data.avatar);
+        } else {
+          setAvatar('/avatar.jpg');
+          localStorage.setItem('nazirboyev_avatar', '/avatar.jpg');
         }
         if (data.messages && Array.isArray(data.messages)) {
           setMessages(data.messages);
@@ -451,8 +499,8 @@ export default function App() {
       <header className="navbar">
         <div className="container nav-container">
           <a href="#" className="nav-logo">
-            <span className="logo-badge">NX</span>
-            <span>Nazirboyev</span>
+            <img src="/logo.jpg" alt="Nazirboyev Logo" className="nav-logo-img" />
+            <span className="nav-logo-text">Nazirboyev</span>
           </a>
 
           {/* Desktop Nav Links */}
@@ -466,26 +514,38 @@ export default function App() {
 
           {/* Tungi/Kunduzgi rejim & Til tanlash & Admin */}
           <div className="nav-controls">
-            {/* Til tanlagich (Language Switcher) */}
-            <div className="lang-switcher" title="Tilni tanlash / Выбор языка / Select Language">
+            {/* Yagona bayroqli til tanlagich (bosilganda qolgan bayroqlar ochiladi) */}
+            <div className="lang-dropdown-wrapper">
               <button
-                className={`lang-btn ${lang === 'uz' ? 'active' : ''}`}
-                onClick={() => setLang('uz')}
+                type="button"
+                className="lang-trigger-btn"
+                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+                title={currentLang.name}
+                aria-label="Tilni tanlash"
               >
-                UZ
+                <currentLang.Flag />
+                <ChevronDown size={12} className={`lang-chevron ${langDropdownOpen ? 'open' : ''}`} />
               </button>
-              <button
-                className={`lang-btn ${lang === 'ru' ? 'active' : ''}`}
-                onClick={() => setLang('ru')}
-              >
-                RU
-              </button>
-              <button
-                className={`lang-btn ${lang === 'en' ? 'active' : ''}`}
-                onClick={() => setLang('en')}
-              >
-                EN
-              </button>
+
+              {langDropdownOpen && (
+                <div className="lang-dropdown-menu">
+                  {otherLangs.map((item) => (
+                    <button
+                      key={item.code}
+                      type="button"
+                      className="lang-dropdown-item"
+                      onClick={() => {
+                        setLang(item.code);
+                        setLangDropdownOpen(false);
+                      }}
+                      title={item.name}
+                    >
+                      <item.Flag />
+                      <span>{item.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Tungi va Kunduzgi rejim tugmasi (Dark / Light Mode) */}
@@ -500,7 +560,7 @@ export default function App() {
             {/* Desktop Admin tugmasi */}
             {isAdmin ? (
               <button
-                className="admin-btn active"
+                className="admin-btn active desktop-only-admin"
                 onClick={() => setShowAdminModal(true)}
                 title={t.nav.adminPanel}
               >
@@ -509,7 +569,7 @@ export default function App() {
               </button>
             ) : (
               <button
-                className="admin-btn"
+                className="admin-btn desktop-only-admin"
                 onClick={() => setShowLoginModal(true)}
                 title={t.nav.admin}
               >

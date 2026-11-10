@@ -54,6 +54,8 @@ html {
   font-family: var(--font-main);
   background-color: var(--bg-main);
   color: var(--text-primary);
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 body {
@@ -61,6 +63,9 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   background-color: var(--bg-main);
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
 }
 
 [data-theme="dark"] body {
@@ -124,11 +129,30 @@ a {
 .nav-logo {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.65rem;
   font-weight: 700;
   font-size: 1.15rem;
   letter-spacing: -0.02em;
   color: var(--text-primary);
+  text-decoration: none;
+}
+
+.nav-logo-img {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  border: 1.5px solid rgba(59, 130, 246, 0.4);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.25);
+  display: block;
+  flex-shrink: 0;
+}
+
+.nav-logo-text {
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .logo-badge {
@@ -170,36 +194,85 @@ a {
   gap: 0.6rem;
 }
 
-.lang-switcher {
+/* Yagona bayroqli til tanlash menyusi (Dropdown) */
+.lang-dropdown-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.lang-trigger-btn {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  padding: 3px;
-  gap: 2px;
-}
-
-.lang-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-size: 0.74rem;
-  font-weight: 700;
-  padding: 0.25rem 0.5rem;
-  border-radius: 5px;
+  padding: 5px 8px;
   cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.03em;
+  transition: all 0.2s ease;
+  height: 36px;
 }
 
-.lang-btn:hover {
+.lang-trigger-btn:hover {
+  border-color: var(--accent);
+  background: var(--bg-card-hover);
+}
+
+.lang-flag-svg {
+  width: 22px;
+  height: 15px;
+  border-radius: 2px;
+  display: block;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+}
+
+.lang-chevron {
+  color: var(--text-secondary);
+  transition: transform 0.2s ease;
+}
+
+.lang-chevron.open {
+  transform: rotate(180deg);
+}
+
+.lang-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card), 0 8px 24px rgba(0, 0, 0, 0.3);
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 130px;
+  z-index: 1000;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.lang-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  border: none;
+  background: transparent;
   color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
 }
 
-.lang-btn.active {
-  background: var(--accent);
-  color: #ffffff;
+.lang-dropdown-item:hover {
+  background: var(--accent-glow);
+  color: var(--accent);
 }
 
 .theme-toggle-btn {
@@ -414,6 +487,7 @@ a {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 20%;
   border-radius: calc(var(--radius-lg) - 6px);
   background: var(--bg-card);
   display: block;
@@ -1205,6 +1279,36 @@ a {
   }
 }
 
+/* 768px dan kichik: faqat pastki navigatsiyada Admin ko'rinadi */
+@media (max-width: 768px) {
+  .desktop-only-admin {
+    display: none !important;
+  }
+}
+
+/* 640px dan kichik telefonlar: Logoning yonidagi 'Nazirboyev' yozuvi yashiriladi, faqat neon logo chiqadi */
+@media (max-width: 640px) {
+  .nav-logo-text {
+    display: none !important;
+  }
+
+  .nav-container {
+    height: 60px;
+  }
+
+  .mobile-menu-drawer {
+    top: 60px;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .nav-controls {
+    gap: 0.4rem;
+  }
+}
+
 /* Kichik telefonlar */
 @media (max-width: 540px) {
   .hero-title {
@@ -1255,11 +1359,6 @@ a {
 
   .nav-controls {
     gap: 0.35rem;
-  }
-
-  .lang-btn {
-    padding: 0.2rem 0.4rem;
-    font-size: 0.7rem;
   }
 }
 
