@@ -638,15 +638,6 @@ export default function App() {
                       <FolderGit2 size={22} />
                     </div>
                     <div className="project-actions">
-                      {isAdmin && (
-                        <button
-                          className="btn-delete-project"
-                          onClick={() => handleDeleteProject(project.id)}
-                          title="O'chirish"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      )}
                       <a
                         href={project.url}
                         target="_blank"
@@ -665,9 +656,15 @@ export default function App() {
 
                 <div className="project-footer">
                   <div className="project-tags">
-                    {project.tags && project.tags.map((tag, idx) => (
-                      <span key={idx} className="tag">{tag}</span>
-                    ))}
+                    {Array.isArray(project.tags)
+                      ? project.tags.map((tag, idx) => (
+                          <span key={idx} className="tag">{tag}</span>
+                        ))
+                      : typeof project.tags === 'string' && project.tags.trim()
+                        ? project.tags.split(',').map((tag, idx) => (
+                            <span key={idx} className="tag">{tag.trim()}</span>
+                          ))
+                        : null}
                   </div>
                   <a
                     href={project.url}
