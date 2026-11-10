@@ -2,18 +2,11 @@ import React, { useState, useEffect } from 'react';
 import {
   ExternalLink,
   Send,
-  Lock,
-  LogOut,
-  Plus,
-  Trash2,
-  Upload,
   User,
   MapPin,
   Briefcase,
   X,
-  MessageSquare,
   FolderGit2,
-  ImageIcon,
   Sparkles,
   Menu,
   Sun,
@@ -230,17 +223,9 @@ export default function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Admin login holati
-  const [isAdmin, setIsAdmin] = useState(() => {
-    return localStorage.getItem('nazirboyev_is_admin') === 'true';
-  });
-
-  // Modallar va menyular
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showAdminModal, setShowAdminModal] = useState(false);
+  // Menyular
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
-  const [adminTab, setAdminTab] = useState('projects'); // 'projects' | 'avatar' | 'messages'
 
   // Til tanlash dropdownini tashqariga bosganda yopish
   useEffect(() => {
@@ -252,22 +237,6 @@ export default function App() {
     document.addEventListener('click', handleOutsideClick);
     return () => document.removeEventListener('click', handleOutsideClick);
   }, []);
-
-  // Login form
-  const [loginUsername, setLoginUsername] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
-
-  // Yangi loyiha formasi
-  const [newProject, setNewProject] = useState({
-    title: '',
-    url: '',
-    description: '',
-    tags: ''
-  });
-
-  // Avatar o'zgartirish formasi
-  const [avatarUrlInput, setAvatarUrlInput] = useState('');
 
   // Kontakt formasi
   const [contactName, setContactName] = useState('');
@@ -354,106 +323,8 @@ export default function App() {
     localStorage.setItem('nazirboyev_messages', JSON.stringify(messages));
   }, [messages]);
 
-  useEffect(() => {
-    localStorage.setItem('nazirboyev_is_admin', isAdmin ? 'true' : 'false');
-  }, [isAdmin]);
 
-  // Login qilish funksiyasi
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (loginUsername === 'nazirboyev' && loginPassword === 'zuxra') {
-      setIsAdmin(true);
-      setShowLoginModal(false);
-      setShowAdminModal(true);
-      setLoginError('');
-      setLoginUsername('');
-      setLoginPassword('');
-    } else {
-      setLoginError(lang === 'ru' ? "Неверный логин или пароль!" : (lang === 'en' ? "Invalid login or password!" : "Login yoki parol noto'g'ri!"));
-    }
-  };
 
-  const handleLogout = () => {
-    setIsAdmin(false);
-    setShowAdminModal(false);
-  };
-
-  // Yangi loyiha qo'shish
-  const handleAddProject = (e) => {
-    e.preventDefault();
-    if (!newProject.title.trim() || !newProject.url.trim()) {
-      alert(lang === 'ru' ? "Введите название и ссылку!" : (lang === 'en' ? "Please enter project title and link!" : "Iltimos, loyiha nomi va havolasini kiriting!"));
-      return;
-    }
-
-    const tagsArray = newProject.tags
-      ? newProject.tags.split(',').map((t) => t.trim()).filter(Boolean)
-      : ['Web'];
-
-    const projectItem = {
-      id: Date.now(),
-      title: newProject.title.trim(),
-      url: newProject.url.trim().startsWith('http') ? newProject.url.trim() : `https://${newProject.url.trim()}`,
-      description: newProject.description.trim() || (lang === 'ru' ? "Веб-проект" : (lang === 'en' ? "Web project" : "Web loyiha.")),
-      tags: tagsArray
-    };
-
-    const updated = [projectItem, ...projects];
-    setProjects(updated);
-    syncToServer(updated, avatar, messages);
-    setNewProject({ title: '', url: '', description: '', tags: '' });
-    alert(lang === 'ru' ? "Проект успешно добавлен и сохранен!" : (lang === 'en' ? "Project added and saved successfully!" : "Yangi loyiha muvaffaqiyatli qo'shildi va saqlandi!"));
-  };
-
-  // Loyihani o'chirish
-  const handleDeleteProject = (id) => {
-    const confirmMsg = lang === 'ru' ? "Удалить этот проект?" : (lang === 'en' ? "Delete this project?" : "Rostdan ham ushbu loyihani o'chirmoqchimisiz?");
-    if (window.confirm(confirmMsg)) {
-      const updated = projects.filter((p) => p.id !== id);
-      setProjects(updated);
-      syncToServer(updated, avatar, messages);
-    }
-  };
-
-  // Rasm yuklash (File dan Base64 ga)
-  const handleAvatarFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        alert(lang === 'ru' ? "Файл слишком большой (макс 2MB)!" : (lang === 'en' ? "File too large (max 2MB)!" : "Rasm hajmi juda katta (maksimal 2MB)!"));
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const newImg = reader.result;
-        setAvatar(newImg);
-        syncToServer(projects, newImg, messages);
-        alert(lang === 'ru' ? "Фото профиля обновлено!" : (lang === 'en' ? "Profile photo updated!" : "Profil rasmi yangilandi!"));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Rasm URL kiritish
-  const handleSetAvatarUrl = (e) => {
-    e.preventDefault();
-    if (avatarUrlInput.trim()) {
-      const newImg = avatarUrlInput.trim();
-      setAvatar(newImg);
-      syncToServer(projects, newImg, messages);
-      setAvatarUrlInput('');
-      alert(lang === 'ru' ? "Фото профиля сохранено!" : (lang === 'en' ? "Profile photo saved!" : "Profil rasmi saqlandi!"));
-    }
-  };
-
-  // Rasmni o'chirish
-  const handleDeleteAvatar = () => {
-    const confirmMsg = lang === 'ru' ? "Удалить фото профиля?" : (lang === 'en' ? "Delete profile photo?" : "Profil rasmini o'chirmoqchimisiz?");
-    if (window.confirm(confirmMsg)) {
-      setAvatar('');
-      syncToServer(projects, '', messages);
-    }
-  };
 
   // Kontakt xabarini jo'natish
   const handleSendMessage = (e) => {
@@ -486,12 +357,6 @@ export default function App() {
     }, 6000);
   };
 
-  // Xabarni o'chirish
-  const handleDeleteMessage = (id) => {
-    const updated = messages.filter((m) => m.id !== id);
-    setMessages(updated);
-    syncToServer(projects, avatar, updated);
-  };
 
   return (
     <div>
@@ -557,26 +422,6 @@ export default function App() {
               {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             </button>
 
-            {/* Desktop Admin tugmasi */}
-            {isAdmin ? (
-              <button
-                className="admin-btn active desktop-only-admin"
-                onClick={() => setShowAdminModal(true)}
-                title={t.nav.adminPanel}
-              >
-                <Lock size={15} />
-                <span>{t.nav.adminPanel}</span>
-              </button>
-            ) : (
-              <button
-                className="admin-btn desktop-only-admin"
-                onClick={() => setShowLoginModal(true)}
-                title={t.nav.admin}
-              >
-                <Lock size={15} />
-                <span>{t.nav.admin}</span>
-              </button>
-            )}
 
             {/* Mobil menyu tugmasi */}
             <div className="mobile-nav-actions">
@@ -741,12 +586,6 @@ export default function App() {
                 ) : (
                   <div className="avatar-placeholder">
                     <User size={68} strokeWidth={1.5} />
-                    <span>{t.hero.noAvatar}</span>
-                    {isAdmin && (
-                      <span style={{ fontSize: '0.75rem', color: 'var(--accent)' }}>
-                        {t.hero.adminUploadHint}
-                      </span>
-                    )}
                   </div>
                 )}
               </div>
@@ -1105,318 +944,7 @@ export default function App() {
           <Send size={19} />
           <span>{t.nav.contact}</span>
         </a>
-        <button
-          onClick={() => (isAdmin ? setShowAdminModal(true) : setShowLoginModal(true))}
-          className={`mobile-tab-btn ${isAdmin ? 'admin-active' : ''}`}
-        >
-          <Lock size={19} />
-          <span>{t.nav.admin}</span>
-        </button>
       </nav>
-
-      {/* LOGIN MODAL */}
-      {showLoginModal && (
-        <div className="modal-overlay" onClick={() => setShowLoginModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3 className="modal-title">
-                <Lock size={22} color="var(--accent)" />
-                {t.admin.title}
-              </h3>
-              <button className="close-btn" onClick={() => setShowLoginModal(false)}>
-                <X size={20} />
-              </button>
-            </div>
-
-            {loginError && <div className="form-alert error" style={{ marginBottom: '1rem' }}>{loginError}</div>}
-
-            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
-              <div className="form-group">
-                <label className="form-label">{t.admin.login}</label>
-                <input
-                  type="text"
-                  required
-                  autoFocus
-                  placeholder="••••••••"
-                  className="form-input"
-                  value={loginUsername}
-                  onChange={(e) => setLoginUsername(e.target.value)}
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">{t.admin.password}</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  className="form-input"
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                />
-              </div>
-
-              <button type="submit" className="btn-primary" style={{ marginTop: '0.5rem' }}>
-                <span>{t.admin.loginBtn}</span>
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ADMIN PANEL DASHBOARD MODAL */}
-      {showAdminModal && (
-        <div className="modal-overlay" onClick={() => setShowAdminModal(false)}>
-          <div className="modal-content wide" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3 className="modal-title">
-                <Sparkles size={22} color="var(--accent)" />
-                {t.admin.dashboardTitle}
-              </h3>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                <button
-                  onClick={handleLogout}
-                  className="btn-secondary"
-                  style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', color: 'var(--danger)' }}
-                >
-                  <LogOut size={16} />
-                  <span>{t.admin.logoutBtn}</span>
-                </button>
-                <button className="close-btn" onClick={() => setShowAdminModal(false)}>
-                  <X size={20} />
-                </button>
-              </div>
-            </div>
-
-            {/* TABLAR */}
-            <div className="admin-tabs">
-              <button
-                className={`admin-tab-btn ${adminTab === 'projects' ? 'active' : ''}`}
-                onClick={() => setAdminTab('projects')}
-              >
-                <Plus size={16} />
-                <span>{t.admin.tabProjects}</span>
-              </button>
-
-              <button
-                className={`admin-tab-btn ${adminTab === 'avatar' ? 'active' : ''}`}
-                onClick={() => setAdminTab('avatar')}
-              >
-                <ImageIcon size={16} />
-                <span>{t.admin.tabAvatar}</span>
-              </button>
-
-              <button
-                className={`admin-tab-btn ${adminTab === 'messages' ? 'active' : ''}`}
-                onClick={() => setAdminTab('messages')}
-              >
-                <MessageSquare size={16} />
-                <span>{t.admin.tabMessages}</span>
-                {messages.length > 0 && <span className="badge-count">{messages.length}</span>}
-              </button>
-            </div>
-
-            {/* TAB 1: YANGI LOYIHA QO'SHISH */}
-            {adminTab === 'projects' && (
-              <div>
-                <form onSubmit={handleAddProject} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <div className="form-group">
-                    <label className="form-label">{t.admin.projName}</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="CRM System"
-                      className="form-input"
-                      value={newProject.title}
-                      onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">{t.admin.projUrl}</label>
-                    <input
-                      type="url"
-                      required
-                      placeholder="https://yangi-loyiha.vercel.app"
-                      className="form-input"
-                      value={newProject.url}
-                      onChange={(e) => setNewProject({ ...newProject, url: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">{t.admin.projDesc}</label>
-                    <textarea
-                      placeholder="Loyiha haqida..."
-                      className="form-textarea"
-                      style={{ minHeight: '80px' }}
-                      value={newProject.description}
-                      onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">{t.admin.projTags}</label>
-                    <input
-                      type="text"
-                      placeholder="React, Next.js, Node.js"
-                      className="form-input"
-                      value={newProject.tags}
-                      onChange={(e) => setNewProject({ ...newProject, tags: e.target.value })}
-                    />
-                  </div>
-
-                  <button type="submit" className="btn-primary" style={{ alignSelf: 'flex-start' }}>
-                    <Plus size={18} />
-                    <span>{t.admin.addProjBtn}</span>
-                  </button>
-                </form>
-
-                <div style={{ marginTop: '2rem', borderTop: '1px solid var(--border-color)', paddingTop: '1.2rem' }}>
-                  <h4 style={{ marginBottom: '1rem', fontSize: '1rem' }}>{t.admin.existingProjs} ({projects.length})</h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', maxHeight: '220px', overflowY: 'auto' }}>
-                    {projects.map((p) => (
-                      <div
-                        key={p.id}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          background: 'var(--input-bg)',
-                          padding: '0.75rem 1rem',
-                          borderRadius: '8px',
-                          border: '1px solid var(--border-color)'
-                        }}
-                      >
-                        <div>
-                          <div style={{ fontWeight: 600 }}>{p.title}</div>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{p.url}</div>
-                        </div>
-                        <button
-                          onClick={() => handleDeleteProject(p.id)}
-                          className="btn-delete-project"
-                          title="O'chirish"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* TAB 2: PROFIL RASMINI BOSHQARISH */}
-            {adminTab === 'avatar' && (
-              <div>
-                <div className="avatar-preview-box">
-                  {avatar ? (
-                    <img src={avatar} alt="Profil rasmi" className="preview-thumb" />
-                  ) : (
-                    <div className="preview-thumb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-card)' }}>
-                      <User size={36} color="var(--text-muted)" />
-                    </div>
-                  )}
-                  <div>
-                    <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>
-                      {avatar ? "Rasm yuklangan" : "Rasm mavjud emas"}
-                    </div>
-                    {avatar && (
-                      <button
-                        onClick={handleDeleteAvatar}
-                        className="btn-delete-project"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.8rem', marginTop: '0.4rem' }}
-                      >
-                        <Trash2 size={15} />
-                        <span>{t.admin.deleteAvatarBtn}</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                  <div style={{ background: 'var(--input-bg)', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
-                    <h4 style={{ marginBottom: '0.5rem', fontSize: '0.95rem' }}>{t.admin.uploadTitle}</h4>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                      {t.admin.uploadDesc}
-                    </p>
-                    <label className="btn-secondary" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <Upload size={18} />
-                      <span>{t.admin.selectFile}</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleAvatarFileUpload}
-                        style={{ display: 'none' }}
-                      />
-                    </label>
-                  </div>
-
-                  <form onSubmit={handleSetAvatarUrl} style={{ background: 'var(--input-bg)', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
-                    <h4 style={{ marginBottom: '0.5rem', fontSize: '0.95rem' }}>{t.admin.urlTitle}</h4>
-                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.75rem' }}>
-                      <input
-                        type="url"
-                        placeholder="https://example.com/avatar.jpg"
-                        className="form-input"
-                        value={avatarUrlInput}
-                        onChange={(e) => setAvatarUrlInput(e.target.value)}
-                      />
-                      <button type="submit" className="btn-primary" style={{ whiteSpace: 'nowrap' }}>
-                        {t.admin.saveBtn}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
-
-            {/* TAB 3: KELGAN XABARLAR */}
-            {adminTab === 'messages' && (
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <h4 style={{ fontSize: '1rem' }}>{t.admin.messagesTitle}</h4>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    {messages.length} ta
-                  </span>
-                </div>
-
-                {messages.length === 0 ? (
-                  <div className="empty-state">
-                    <MessageSquare size={44} style={{ opacity: 0.3, marginBottom: '0.5rem' }} />
-                    <p>{t.admin.noMessages}</p>
-                  </div>
-                ) : (
-                  <div className="messages-list" style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                    {messages.map((msg) => (
-                      <div key={msg.id} className="message-item">
-                        <div className="message-meta">
-                          <div>
-                            <span className="sender-name">{msg.name}</span>
-                            <span style={{ margin: '0 0.5rem', color: 'var(--text-muted)' }}>&bull;</span>
-                            <span className="sender-contact">{msg.contact}</span>
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                            <span className="message-date">{msg.date}</span>
-                            <button
-                              onClick={() => handleDeleteMessage(msg.id)}
-                              className="btn-delete-project"
-                              title="O'chirish"
-                            >
-                              <Trash2 size={15} />
-                            </button>
-                          </div>
-                        </div>
-                        <div className="message-text">{msg.message}</div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
