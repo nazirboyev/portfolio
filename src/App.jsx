@@ -550,22 +550,6 @@ export default function App() {
                   </div>
                   <div className="info-card-value">{t.hero.hobbyValue}</div>
                 </div>
-
-                {/* Telefon raqamlar kartasi (Full width) */}
-                <div className="info-card full-width">
-                  <div className="info-card-label">
-                    <Phone size={14} />
-                    <span>{t.hero.phonesLabel}</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', marginTop: '0.2rem' }}>
-                    <a href="tel:+998888571817" className="phone-link">
-                      📞 +998 88 857 18 17
-                    </a>
-                    <a href="tel:+998776040009" className="phone-link">
-                      📞 +998 77 604 00 09
-                    </a>
-                  </div>
-                </div>
               </div>
 
               <div className="hero-actions">
@@ -753,34 +737,6 @@ export default function App() {
               <div className="social-meta">
                 <h4>GitHub</h4>
                 <p>{t.social.githubSub}</p>
-              </div>
-            </a>
-
-            {/* Telefon 1 */}
-            <a
-              href="tel:+998888571817"
-              className="social-card"
-            >
-              <div className="social-icon-wrapper">
-                <Phone size={22} />
-              </div>
-              <div className="social-meta">
-                <h4>+998 88 857 18 17</h4>
-                <p>{t.social.phone1Sub}</p>
-              </div>
-            </a>
-
-            {/* Telefon 2 */}
-            <a
-              href="tel:+998776040009"
-              className="social-card"
-            >
-              <div className="social-icon-wrapper">
-                <Phone size={22} />
-              </div>
-              <div className="social-meta">
-                <h4>+998 77 604 00 09</h4>
-                <p>{t.social.phone2Sub}</p>
               </div>
             </a>
           </div>

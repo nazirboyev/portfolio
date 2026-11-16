@@ -52,15 +52,13 @@ export const translations = {
       visit: "Ko'rish"
     },
     social: {
-      tag: "Tarmoqlar & Aloqa",
-      title: "Ijtimoiy Tarmoqlar va Telefonlar",
-      desc: "Rasmiy sahifalarim, YouTube kanalim hamda to'g'ridan-to'g'ri aloqa vositalari:",
+      tag: "Tarmoqlar",
+      title: "Ijtimoiy Tarmoqlar",
+      desc: "Mening rasmiy sahifalarim, YouTube kanalim hamda shaxsiy profillarim:",
       youtubeSub: "@XudishPlay • Video o'yinlar & Strim",
       telegramSub: "@nazirboyev_x • Tezkor javob",
       instagramSub: "@nazirboyev.x • Shaxsiy profil",
-      githubSub: "github.com/nazirboyev • Kod ombori",
-      phone1Sub: "+998 88 857 18 17 (Asosiy raqam)",
-      phone2Sub: "+998 77 604 00 09 (Qo'shimcha raqam)"
+      githubSub: "github.com/nazirboyev • Kod ombori"
     },
     contact: {
       tag: "Aloqa",
@@ -163,15 +161,13 @@ export const translations = {
       visit: "Открыть"
     },
     social: {
-      tag: "Соцсети и Связь",
-      title: "Социальные Сети и Телефоны",
-      desc: "Официальные профили, YouTube канал и прямые способы связи:",
+      tag: "Соцсети",
+      title: "Социальные Сети",
+      desc: "Официальные каналы, YouTube страница и личные профили:",
       youtubeSub: "@XudishPlay • Видеоигры и стримы",
       telegramSub: "@nazirboyev_x • Быстрый ответ",
       instagramSub: "@nazirboyev.x • Личный профиль",
-      githubSub: "github.com/nazirboyev • Репозитории кода",
-      phone1Sub: "+998 88 857 18 17 (Основной)",
-      phone2Sub: "+998 77 604 00 09 (Дополнительный)"
+      githubSub: "github.com/nazirboyev • Репозитории кода"
     },
     contact: {
       tag: "Контакты",
@@ -274,15 +270,13 @@ export const translations = {
       visit: "Visit"
     },
     social: {
-      tag: "Social & Contact",
-      title: "Social Networks & Phone Numbers",
-      desc: "Official channels, YouTube page, and direct contact details:",
+      tag: "Social Media",
+      title: "Social Networks",
+      desc: "Official channels, YouTube page, and personal profiles:",
       youtubeSub: "@XudishPlay • Video Games & Streaming",
       telegramSub: "@nazirboyev_x • Instant response",
       instagramSub: "@nazirboyev.x • Personal profile",
-      githubSub: "github.com/nazirboyev • Code repositories",
-      phone1Sub: "+998 88 857 18 17 (Primary)",
-      phone2Sub: "+998 77 604 00 09 (Secondary)"
+      githubSub: "github.com/nazirboyev • Code repositories"
     },
     contact: {
       tag: "Contact",
